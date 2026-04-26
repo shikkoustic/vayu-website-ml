@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirChat</title>
+  <link rel="stylesheet" href="static/css/airchat.css">
+</head>
+<body {% if embed %}class="embedded"{% endif %}>
+{% if not embed %}
+{% include 'components/navbar.html' %}
+{% endif %}
+
+  <div class="airchat-container">
+    <div class="chat-wrapper">
+      <div class="chat-header">
+        <span>🌬️ AirChat</span>
+        <p>Ask me anything about air quality & pollution</p>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot-message">
+          <div class="bubble">Hi! I'm AirChat 👋 Ask me anything about air quality, AQI, or pollutants!</div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Ask about AQI, PM2.5, pollution..." />
+        <button id="sendBtn" onclick="sendMessage()" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+
+  // Load chat when page opens (session only)
+  window.onload = function() {
+    const savedChat = sessionStorage.getItem("airchat_history");
+    if (savedChat) {
+      document.getElementById('chatMessages').innerHTML = savedChat;
+    }
+  };
+
+  // Save chat to sessionStorage
+  function saveChat() {
+    const messages = document.getElementById('chatMessages').innerHTML;
+    sessionStorage.setItem("airchat_history", messages);
+  }
+
+  // Add message (user or bot)
+  function addMessage(text, type) {
+    const messages = document.getElementById('chatMessages');
+    messages.innerHTML += `
+      <div class="message ${type}-message">
+        <div class="bubble">${text}</div>
+      </div>`;
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // Typing animation for bot reply
+  function typeBotMessage(text) {
+    const messages = document.getElementById('chatMessages');
+
+    const messageDiv = document.createElement("div");
+    messageDiv.className = "message bot-message";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+
+    messageDiv.appendChild(bubble);
+    messages.appendChild(messageDiv);
+
+    let i = 0;
+    function typing() {
+      if (i < text.length) {
+        bubble.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typing, 15);
+      } else {
+        saveChat();
+      }
+    }
+
+    typing();
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const messages = document.getElementById('chatMessages');
+    const userText = input.value.trim();
+
+    if (!userText) return;
+
+    // Add user message
+    addMessage(userText, "user");
+    saveChat();
+
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+
+    // Add animated thinking bubble
+    const loadingId = 'loading-' + Date.now();
+    messages.innerHTML += `
+      <div class="message bot-message" id="${loadingId}">
+        <div class="bubble typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>`;
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+      const res = await fetch('/airchat/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await res.json();
+
+      // Remove thinking bubble
+      document.getElementById(loadingId).remove();
+
+      // Typing effect reply
+      typeBotMessage(data.reply);
+
+    } catch (error) {
+      document.getElementById(loadingId).remove();
+      addMessage("Something went wrong. Please try again.", "bot");
+      saveChat();
+    }
+  }
+
+  document.getElementById('userInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+
+</script>
+</html>

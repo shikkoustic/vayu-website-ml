@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="/static/css/navbar.css">
+<nav class="navbar {% if navbar_theme == 'light' %}light-nav{% endif %}">
+  <div class="nav-container">
+    <div class="logo"><a href="/dashboard"><img src="/static/images/logo.png" alt="Vayu" class="logo-home"></a></div>
+    <div class="nav-links">
+      <a href="/aqi" class="nav-btn">AQI</a>
+
+      <a href="/about" class="nav-btn">About Us</a>
+      <a href="/pay" class="nav-btn">Pay</a>
+      <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.nav-btn').forEach(link => {
+        if (link.getAttribute('href') === window.location.pathname) {
+            link.classList.add('active');
+        }
+    });
+});
+</script>

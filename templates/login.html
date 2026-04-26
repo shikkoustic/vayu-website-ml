@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="static/css/authenticate.css">
+</head>
+<body>
+  <h2>Login</h2>
+
+{% if not show_otp %}
+  <form action="/login" method="POST">
+    <label>Email</label>
+    <input type="email" name="email" required placeholder="Enter Your Email">
+
+    <label>Password</label>
+    <input type="password" name="password" required placeholder="Enter Your Password">
+
+    <button type="submit">Login</button>
+  </form>
+  
+  <p class="forgot-password-link">
+    <a href="/forgot-password">Forgot Password?</a>
+  </p>
+{% endif %}
+
+{% if show_otp %}
+  <form method="POST" action="/verify-otp">
+    <input type="hidden" name="email" value="{{ email }}">
+    <label>Enter OTP</label>
+    <input type="text" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6">
+    <button type="submit">Verify</button>
+  </form>
+{% endif %}
+
+  {% if error %}
+    <p class="server-message error">{{ error }}</p>
+  {% endif %}
+
+  {% if success %}
+    <p class="server-message success">{{ success }}</p>
+  {% endif %}
+
+  <p>
+    Don't have an Account?
+    <a href="/register">Register Here</a>
+  </p>
+</body>
+</html>

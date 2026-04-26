@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PM2.5 - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-pm25">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header pm25">
+          <h1 class="pollutant-title">PM2.5</h1>
+          <p class="pollutant-subtitle">Particulate Matter &lt; 2.5 µm</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is PM2.5?</h2>
+          <p>PM2.5 refers to fine particulate matter with a diameter of 2.5 micrometers or smaller. These particles are
+            so tiny that they can penetrate deep into your lungs and even enter your bloodstream.</p>
+          <p>To put this in perspective, PM2.5 particles are about <strong>30 times smaller</strong> than the width of a
+            human hair.</p>
+        </div>
+      </div>
+
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> Sources of PM2.5</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Vehicle Emissions</div>
+              <div class="source-card-desc">Cars, trucks, and diesel vehicles produce fine exhaust particles during
+                combustion.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Industrial Activities</div>
+              <div class="source-card-desc">Factories, power plants, and refineries release particulates through regular
+                operations.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Construction Sites</div>
+              <div class="source-card-desc">Dust and debris from building and demolition activities enter the ambient
+                air.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Burning</div>
+              <div class="source-card-desc">Combustion of wood, coal, crop stubble, and waste releases heavy particulate
+                loads.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Natural Sources</div>
+              <div class="source-card-desc">Dust storms, wildfires, and volcanic eruptions contribute significantly to
+                ambient PM2.5.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Indoor Sources</div>
+              <div class="source-card-desc">Cooking, smoking, and incense burning generate fine particles in enclosed
+                spaces.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+
+            <div class="health-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Short-term</div>
+                <ul class="effect-list">
+                  <li>Eye, nose, and throat irritation</li>
+                  <li>Coughing and difficulty breathing</li>
+                  <li>Aggravation of asthma</li>
+                  <li>Decreased lung function</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">Long-term</div>
+                <ul class="effect-list">
+                  <li>Chronic respiratory diseases</li>
+                  <li>Heart disease and stroke</li>
+                  <li>Lung cancer</li>
+                  <li>Premature death</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="protection-col">
+              <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+              <ul class="protection-list">
+                <li><strong>Wear Masks</strong> — N95 or N99 when AQI is high</li>
+                <li><strong>Stay Indoors</strong> — Keep windows closed on polluted days</li>
+                <li><strong>Air Purifiers</strong> — Install HEPA filters at home</li>
+                <li><strong>Avoid Peak Hours</strong> — Limit outdoor activity during rush hours</li>
+                <li><strong>Monitor AQI Daily</strong> — Check air quality before heading out</li>
+                <li><strong>Indoor Plants</strong> — Keep air-purifying plants at home</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="who-block">
+          <h2 class="who-heading">📊 WHO Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">24-hour mean</div>
+              <div class="who-stat-value">15</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">Annual mean</div>
+              <div class="who-stat-value">5</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">Exceeding these values poses significant health risks to the general population.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

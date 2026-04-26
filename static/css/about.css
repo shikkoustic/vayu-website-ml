@@ -1,0 +1,55 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #6dd5fa 0%, #2980b9 45%, #a78bfa 100%);
+      background-attachment: fixed;
+      color: #f0e6ff;
+      min-height: 100vh;
+    }
+
+    /* Navbar styles are in /static/css/navbar.css */
+
+    /* ── About Content ── */
+    .about-container {
+      max-width: 760px;
+      margin: 80px auto 0;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .about-heading {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 32px;
+      background: white;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-description {
+      font-size: 1.125rem;
+      line-height: 1.9;
+      color: white
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      font-size: 0.8rem;
+      font-style: italic;
+      color: white;
+      max-width: 340px;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container { padding: 6px 6px; gap: 2px; flex-wrap: wrap; justify-content: center; }
+      .nav-btn { padding: 6px 12px; font-size: 0.8rem; }
+      .about-heading { font-size: 2.25rem; }
+      .about-description { font-size: 1rem; }
+      .disclaimer { position: static; margin: 40px 20px 24px; text-align: center; }
+    }

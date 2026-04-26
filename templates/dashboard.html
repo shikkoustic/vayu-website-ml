@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Project Vayu</title>
+  <meta name="description" content="Real-time Air Quality Index dashboard for Delhi with AI-powered forecasts">
+  <link rel="stylesheet" href="/static/css/navbar.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+
+{% if prediction and prediction.weather %}
+  {% set weather = prediction.weather %}
+  {% set bg_img = weather.bg_image | default('clear_day.png') %}
+  {% set time_period = weather.time_period | default('afternoon') %}
+{% else %}
+  {% set bg_img = 'clear_day.png' %}
+  {% set time_period = 'afternoon' %}
+{% endif %}
+
+<body class="tp-{{ time_period }}" style="--bg-image: url('/static/images/weather/{{ bg_img }}');">
+
+  <div class="bg-layer"></div>
+  <div class="bg-overlay"></div>
+
+  {% include 'components/navbar.html' %}
+
+  <main class="dash-main">
+
+    {% if prediction and 'current_pollutants' in prediction %}
+    {% set cp = prediction.current_pollutants %}
+    {% set best = prediction.best %}
+    {% set weather = prediction.weather %}
+
+    <div class="location-bar">
+      <div class="location-left">
+        <svg class="pin-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <div>
+          <div class="location-name">
+            <select id="regionSelect" onchange="updateDashboard()">
+              <option value="North_Delhi" {% if selected_region == 'North_Delhi' %}selected{% endif %}>North Delhi</option>
+              <option value="South_Delhi" {% if selected_region == 'South_Delhi' %}selected{% endif %}>South Delhi</option>
+              <option value="East_Delhi" {% if selected_region == 'East_Delhi' %}selected{% endif %}>East Delhi</option>
+              <option value="West_Delhi" {% if selected_region == 'West_Delhi' %}selected{% endif %}>West Delhi</option>
+              <option value="Central_Delhi" {% if selected_region == 'Central_Delhi' %}selected{% endif %}>Central Delhi</option>
+            </select>, Delhi, India
+          </div>
+          <div class="location-updated">Last updated: {{ prediction.last_updated }} (Local Time)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-row">
+
+      {% set aqi_slug = cp.category | lower | replace(' ', '-') %}
+      <div class="aqi-card glass-card aqi-{{ aqi_slug }}">
+        <div class="aqi-live-badge"><span class="live-dot"></span> LIVE</div>
+        <div class="aqi-title-label">Air Quality Index</div>
+
+        <div class="aqi-hero-row">
+          <div class="aqi-left">
+            <div class="aqi-number" id="aqiNum" data-target="{{ cp.aqi }}" style="color: {{ cp.color }};">0</div>
+            <div class="aqi-sub-label">AQI (India)</div>
+          </div>
+          <div class="aqi-right">
+            <div class="aqi-quality-label">Air Quality is</div>
+            <div class="aqi-category" style="color: {{ cp.color }};">{{ cp.category }}</div>
+          </div>
+        </div>
+
+        <div class="ai-forecast-pill">
+          🤖 AI Forecast (Next Hour): <strong>{{ best.aqi }}</strong>
+          <span class="ai-model-tag">{{ prediction.best_model | upper if prediction.best_model else '' }}</span>
+        </div>
+
+        <div class="pm25-row">
+          <div class="pm25-col">
+            <div class="pm25-label">Measured PM2.5</div>
+            <div class="pm25-value">{{ cp.pm25 }} <small>µg/m³</small></div>
+          </div>
+          <div class="pm25-col">
+            <div class="pm25-label">AI Predict PM2.5</div>
+            <div class="pm25-value">{{ best.pm25 }} <small>µg/m³</small></div>
+          </div>
+        </div>
+
+        <div class="aqi-scale-wrap">
+          <div class="aqi-scale-bar">
+            {% set aqi = cp.aqi %}
+            {% if aqi <= 50 %}
+              {% set bar_pos = (aqi / 50 * 16.6) %}
+            {% elif aqi <= 100 %}
+              {% set bar_pos = 16.6 + ((aqi - 50) / 50 * 16.6) %}
+            {% elif aqi <= 200 %}
+              {% set bar_pos = 33.3 + ((aqi - 100) / 100 * 16.6) %}
+            {% elif aqi <= 300 %}
+              {% set bar_pos = 50.0 + ((aqi - 200) / 100 * 16.6) %}
+            {% elif aqi <= 400 %}
+              {% set bar_pos = 66.6 + ((aqi - 300) / 100 * 16.6) %}
+            {% else %}
+              {% set bar_pos = 83.3 + (([aqi - 400, 100]|min) / 100 * 16.6) %}
+            {% endif %}
+            <div class="aqi-scale-dot" style="left: {{ bar_pos | round(1) }}%;"></div>
+          </div>
+          <div class="aqi-scale-labels">
+            <div class="scale-item"><span>Good</span><small>0-50</small></div>
+            <div class="scale-item"><span>Satisfactory</span><small>51-100</small></div>
+            <div class="scale-item"><span>Moderate</span><small>101-200</small></div>
+            <div class="scale-item"><span>Poor</span><small>201-300</small></div>
+            <div class="scale-item"><span>Very Poor</span><small>301-400</small></div>
+            <div class="scale-item"><span>Severe</span><small>401-500</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weather-card glass-card">
+        <div class="weather-title-label">Current Weather</div>
+
+        <div class="weather-hero">
+          <span class="weather-emoji">
+            {% if weather.class == 'clear_night' %}🌙
+            {% elif weather.class == 'clear_day' %}☀️
+            {% elif weather.class == 'cloudy' %}⛅
+            {% elif weather.class == 'cloudy_night' %}☁️
+            {% elif weather.class == 'mist' %}🌫️
+            {% elif weather.class == 'rain' %}🌧️
+            {% elif weather.class == 'thunderstorm' %}⛈️
+            {% elif weather.class == 'sunset' %}🌆
+            {% else %}🌤️{% endif %}
+          </span>
+          <div class="weather-temp-block">
+            <span class="weather-temp">{{ weather.temp }}<small>°C</small></span>
+            <span class="weather-cond-text">{{ weather.condition }}</span>
+          </div>
+        </div>
+
+        <div class="weather-divider"></div>
+
+        <div class="weather-metrics">
+          <div class="w-metric">
+            <div class="w-metric-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <div class="w-metric-info">
+              <div class="w-metric-label">Humidity</div>
+              <div class="w-metric-val">{{ weather.humidity }}%</div>
+            </div>
+          </div>
+          <div class="w-metric">
+            <div class="w-metric-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+            </div>
+            <div class="w-metric-info">
+              <div class="w-metric-label">Wind</div>
+              <div class="w-metric-val">{{ weather.wind_speed }} km/h</div>
+            </div>
+          </div>
+          <div class="w-metric">
+            <div class="w-metric-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="w-metric-info">
+              <div class="w-metric-label">Pressure</div>
+              <div class="w-metric-val">{{ weather.pressure }} hPa</div>
+            </div>
+          </div>
+          <div class="w-metric">
+            <div class="w-metric-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="w-metric-info">
+              <div class="w-metric-label">Visibility</div>
+              <div class="w-metric-val">{{ weather.visibility }} km</div>
+            </div>
+          </div>
+        </div>
+
+        {% if weather.forecast_hours and weather.forecast_hours | length > 0 %}
+        <div class="forecast-divider"></div>
+        <div class="forecast-strip">
+          {% for slot in weather.forecast_hours %}
+          <div class="forecast-slot">
+            <span class="fc-time">{{ slot.time }}</span>
+            <span class="fc-emoji">{{ slot.emoji }}</span>
+            <span class="fc-temp">{{ slot.temp }}°</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <section class="pollutants-section">
+      <h2 class="poll-heading">Major Air Pollutants <small>{{ selected_region.replace('_', ' ') }}</small></h2>
+      <div class="pollutants-grid">
+
+        {% set pm_level = 'Severe' if cp.aqi > 400 else 'Very Poor' if cp.aqi > 300 else 'Poor' if cp.aqi > 200 else 'Moderate' if cp.aqi > 100 else 'Satisfactory' if cp.aqi > 50 else 'Good' %}
+        {% set pm_color = '#991b1b' if cp.aqi > 400 else '#ef4444' if cp.aqi > 300 else '#f97316' if cp.aqi > 200 else '#eab308' if cp.aqi > 100 else '#84cc16' if cp.aqi > 50 else '#22c55e' %}
+        <a href="/pollutants/pm25" class="poll-card glass-card">
+          <div class="poll-card-top">
+            <div class="poll-icon poll-icon-pm25">🌫️</div>
+            <div class="poll-info">
+              <span class="poll-name">Particulate Matter</span>
+              <span class="poll-desc">PM2.5 (AQI Sub-Index)</span>
+            </div>
+          </div>
+          <div class="poll-card-bottom">
+            <div>
+              <span class="poll-value">{{ cp.pm25 }}</span>
+              <span class="poll-unit">µg/m³</span>
+            </div>
+            <span class="poll-level" style="color: {{ pm_color }};">{{ pm_level }}</span>
+            <span class="poll-arrow">→</span>
+          </div>
+        </a>
+
+        {% set no2_level = 'High' if cp.no2 > 40 else 'Moderate' if cp.no2 > 10 else 'Low' %}
+        {% set no2_color = '#ef4444' if cp.no2 > 40 else '#f59e0b' if cp.no2 > 10 else '#4ade80' %}
+        <a href="/pollutants/no2" class="poll-card glass-card">
+          <div class="poll-card-top">
+            <div class="poll-icon poll-icon-no2">💨</div>
+            <div class="poll-info">
+              <span class="poll-name">Nitrogen Dioxide</span>
+              <span class="poll-desc">NO2 (Traffic exhaust)</span>
+            </div>
+          </div>
+          <div class="poll-card-bottom">
+            <div>
+              <span class="poll-value">{{ cp.no2 }}</span>
+              <span class="poll-unit">ppb</span>
+            </div>
+            <span class="poll-level" style="color: {{ no2_color }};">{{ no2_level }}</span>
+            <span class="poll-arrow">→</span>
+          </div>
+        </a>
+
+        {% set co_level = 'High' if cp.co > 10 else 'Moderate' if cp.co > 4 else 'Low' %}
+        {% set co_color = '#ef4444' if cp.co > 10 else '#f59e0b' if cp.co > 4 else '#4ade80' %}
+        <a href="/pollutants/co" class="poll-card glass-card">
+          <div class="poll-card-top">
+            <div class="poll-icon poll-icon-co">🔥</div>
+            <div class="poll-info">
+              <span class="poll-name">Carbon Monoxide</span>
+              <span class="poll-desc">CO (Incomplete combustion)</span>
+            </div>
+          </div>
+          <div class="poll-card-bottom">
+            <div>
+              <span class="poll-value">{{ cp.co }}</span>
+              <span class="poll-unit">ppb</span>
+            </div>
+            <span class="poll-level" style="color: {{ co_color }};">{{ co_level }}</span>
+            <span class="poll-arrow">→</span>
+          </div>
+        </a>
+
+        {% set so2_level = 'High' if cp.so2 > 20 else 'Moderate' if cp.so2 > 5 else 'Low' %}
+        {% set so2_color = '#ef4444' if cp.so2 > 20 else '#f59e0b' if cp.so2 > 5 else '#4ade80' %}
+        <a href="/pollutants/so2" class="poll-card glass-card">
+          <div class="poll-card-top">
+            <div class="poll-icon poll-icon-so2">🏭</div>
+            <div class="poll-info">
+              <span class="poll-name">Sulfur Dioxide</span>
+              <span class="poll-desc">SO2 (Industrial emissions)</span>
+            </div>
+          </div>
+          <div class="poll-card-bottom">
+            <div>
+              <span class="poll-value">{{ cp.so2 }}</span>
+              <span class="poll-unit">ppb</span>
+            </div>
+            <span class="poll-level" style="color: {{ so2_color }};">{{ so2_level }}</span>
+            <span class="poll-arrow">→</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    {% else %}
+    <div class="fallback-card glass-card">
+      <h2>Loading AQI Data…</h2>
+      <p>Prediction data is not available right now. Please check back shortly.</p>
+    </div>
+    {% endif %}
+
+  </main>
+
+  <script>
+    function animateCountUp(el) {
+      const target = parseInt(el.dataset.target, 10);
+      if (isNaN(target)) { el.textContent = '—'; return; }
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = document.getElementById('aqiNum');
+      if (el) animateCountUp(el);
+    });
+
+    function updateDashboard() {
+      const region = document.getElementById('regionSelect').value;
+      window.location.href = `/dashboard?region=${region}`;
+    }
+  </script>
+</body>
+</html>

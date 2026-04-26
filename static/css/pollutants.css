@@ -1,0 +1,469 @@
+:root {
+  --theme-bg-gradient: linear-gradient(to right top, #443247, #333d56, #1f4859, #205050, #375543);
+  --theme-accent: #ffffff;
+  --theme-card-bg: rgba(255, 255, 255, 0.07);
+  --theme-card-hover: rgba(255, 255, 255, 0.13);
+  --theme-shadow: rgba(0, 0, 0, 0.2);
+}
+
+body.theme-pm25 {
+  --theme-bg-gradient: linear-gradient(135deg, #2b303a 0%, #3f4c6b 100%);
+  --theme-accent: #9ba4b5;
+}
+
+body.theme-pm10 {
+  --theme-bg-gradient: linear-gradient(135deg, #3d3b3c 0%, #686259 100%);
+  --theme-accent: #d6d3d1;
+}
+
+body.theme-no2 {
+  --theme-bg-gradient: linear-gradient(135deg, #381c1c 0%, #7d3c3c 100%);
+  --theme-accent: #f87171;
+}
+
+body.theme-so2 {
+  --theme-bg-gradient: linear-gradient(135deg, #3a3219 0%, #766324 100%);
+  --theme-accent: #fcd34d;
+}
+
+body.theme-co {
+  --theme-bg-gradient: linear-gradient(135deg, #1b2028 0%, #293447 100%);
+  --theme-accent: #818cf8;
+}
+
+body.theme-o3 {
+  --theme-bg-gradient: linear-gradient(135deg, #132f3b 0%, #205e73 100%);
+  --theme-accent: #2dd4bf;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--theme-bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: #fff;
+}
+
+.content-area {
+  background: transparent !important;
+  border: none !important;
+  padding: 40px 0 !important;
+}
+
+
+
+.info-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pollutant-header {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 56px 44px;
+  margin-bottom: 72px;
+  text-align: center;
+  box-shadow: 0 10px 30px var(--theme-shadow);
+  border-bottom: 3px solid var(--theme-accent);
+}
+
+.pollutant-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 6rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 14px;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.pollutant-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  color: var(--theme-accent);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 28px;
+  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.section-heading .emoji {
+  font-size: 1.8rem;
+}
+
+.what-block {
+  margin-bottom: 80px;
+}
+
+.what-block p {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 14px;
+  max-width: 820px;
+  font-weight: 300;
+}
+
+.what-block strong {
+  color: var(--theme-accent);
+  font-weight: 500;
+}
+
+.sources-section {
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+  margin-bottom: 88px;
+}
+
+.sources-img-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 40%;
+  filter: blur(3px) brightness(0.32) saturate(0.7);
+  transform: scale(1.07);
+}
+
+body.theme-pm25 .sources-img-bg {
+  background-image: url('https://atovio.in/cdn/shop/articles/Effect_of_Air_pollution_16a2e2af-ca3f-478a-8cb7-8cf04fd7d92d.jpg?v=1751739793');
+}
+
+body.theme-pm10 .sources-img-bg,
+body.theme-no2 .sources-img-bg,
+body.theme-so2 .sources-img-bg,
+body.theme-co .sources-img-bg,
+body.theme-o3 .sources-img-bg {
+  /* Using same image for now due to original code, but changing overlay color in CSS below */
+  background-image: url('https://etimg.etb2bimg.com/photo/88391325.cms');
+}
+
+body.theme-pm10 .sources-img-bg::after { background: linear-gradient(to bottom, rgba(40,30,20, 0.6) 0%, rgba(40,30,20, 0.3) 40%, rgba(40,30,20, 0.7) 100%); }
+body.theme-no2 .sources-img-bg::after { background: linear-gradient(to bottom, rgba(50,10,10, 0.6) 0%, rgba(50,10,10, 0.3) 40%, rgba(50,10,10, 0.7) 100%); }
+body.theme-so2 .sources-img-bg::after { background: linear-gradient(to bottom, rgba(50,40,10, 0.6) 0%, rgba(50,40,10, 0.3) 40%, rgba(50,40,10, 0.7) 100%); }
+body.theme-co .sources-img-bg::after { background: linear-gradient(to bottom, rgba(10,10,30, 0.6) 0%, rgba(10,10,30, 0.3) 40%, rgba(10,10,30, 0.7) 100%); }
+body.theme-o3 .sources-img-bg::after { background: linear-gradient(to bottom, rgba(10,30,40, 0.6) 0%, rgba(10,30,40, 0.3) 40%, rgba(10,30,40, 0.7) 100%); }
+body.theme-pm25 .sources-img-bg::after { background: linear-gradient(to bottom, rgba(20,20,30, 0.6) 0%, rgba(20,20,30, 0.3) 40%, rgba(20,20,30, 0.7) 100%); }
+
+.sources-img-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.sources-content {
+  position: relative;
+  z-index: 2;
+  padding: 64px 32px 72px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.sources-content .section-heading {
+  margin-bottom: 40px;
+}
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.source-card {
+  background: var(--theme-card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 24px 22px 26px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.source-card:hover {
+  background: var(--theme-card-hover);
+  transform: translateY(-5px);
+  border-color: var(--theme-accent);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.source-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--theme-accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.source-card-desc {
+  font-size: 0.845rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.dual-section-wrapper {
+  position: relative;
+  margin-bottom: 88px;
+}
+
+.col-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--theme-accent) 30%, var(--theme-accent) 70%, transparent);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.dual-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 64px;
+  align-items: start;
+}
+
+.protection-col, .right-col {
+  margin-top: 88px;
+}
+
+.effect-group {
+  margin-bottom: 36px;
+}
+
+.effect-group-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--theme-accent);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.effect-list, .protection-list, .styled-list {
+  list-style: none;
+  padding: 0;
+}
+
+.effect-list li, .protection-list li, .styled-list li {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.65;
+  font-weight: 300;
+  padding: 10px 0 10px 20px;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.effect-list li:last-child, .protection-list li:last-child, .styled-list li:last-child {
+  border-bottom: none;
+}
+
+.effect-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  opacity: 0.6;
+}
+
+.protection-list li::before, .styled-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  font-size: 0.75rem;
+  color: var(--theme-accent);
+}
+
+.protection-list li strong, .styled-list li strong {
+  color: #fff;
+  font-weight: 500;
+}
+
+.who-block, .extra-block {
+  margin-bottom: 80px;
+}
+
+.who-block, .season-block {
+  padding-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.season-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 36px 40px;
+  margin-top: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* Override padding-top rules */
+}
+
+.season-block p {
+  font-size: 1.0rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.season-block strong {
+  color: var(--theme-accent);
+  font-weight: 500;
+}
+
+.who-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 44px;
+  letter-spacing: -0.5px;
+}
+
+.who-stats {
+  display: flex;
+  gap: 72px;
+  margin-bottom: 32px;
+}
+
+.who-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.who-stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.8rem;
+  font-weight: 700;
+  color: var(--theme-accent);
+  line-height: 1;
+}
+
+.who-stat-unit {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-weight: 300;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+.who-note {
+  display: inline-block;
+  padding: 13px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid var(--theme-accent);
+  border-radius: 0 6px 6px 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-weight: 400;
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+@media (max-width: 820px) {
+  .source-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dual-section {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .protection-col, .right-col {
+    margin-top: 0;
+  }
+
+  .col-divider {
+    display: none;
+  }
+
+  .pollutant-title {
+    font-size: 4rem;
+  }
+
+  .section-heading {
+    font-size: 2.2rem;
+  }
+
+  .who-heading {
+    font-size: 2.8rem;
+  }
+
+  .who-stats {
+    gap: 40px;
+  }
+
+  .who-stat-value {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .source-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sources-content {
+    padding: 48px 20px 56px;
+  }
+
+  .info-section {
+    padding: 0 20px;
+  }
+
+  .pollutant-title {
+    font-size: 3rem;
+  }
+
+  .who-heading {
+    font-size: 2.2rem;
+  }
+}

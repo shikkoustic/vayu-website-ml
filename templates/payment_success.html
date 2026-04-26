@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Vayu</title>
+    <link rel="stylesheet" href="static/css/dashboard.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #c31432, #240b36);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+        }
+        .success-box {
+            margin: 100px auto;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 50px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .success-box h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .success-box p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+        .order-id {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            display: inline-block;
+            margin-bottom: 40px;
+        }
+        .return-btn {
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .return-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 46, 113, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-box">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for supporting the Vayu Air Quality Initiative.</p>
+        
+        <div class="order-id">
+            Order ID: {{ order_id }}
+        </div>
+        
+        <br>
+        <a href="/pay" class="return-btn">Return to Dashboard</a>
+    </div>
+</body>
+</html>

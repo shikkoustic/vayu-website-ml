@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SO₂ - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-so2">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header so2">
+          <h1 class="pollutant-title">SO₂</h1>
+          <p class="pollutant-subtitle">Sulfur Dioxide</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is SO₂?</h2>
+          <p>Sulfur Dioxide (SO₂) is a colorless gas with a pungent, suffocating odor. It's produced when
+            sulfur-containing fuels are burned.</p>
+          <p>SO₂ is a <strong>major contributor to acid rain</strong> and can cause serious respiratory problems.</p>
+        </div>
+      </div>
+
+      <!-- Sources — full-bleed image -->
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> Sources of SO₂</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Coal Power Plants</div>
+              <div class="source-card-desc">The largest single source of SO₂ emissions globally.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Industrial Facilities</div>
+              <div class="source-card-desc">Smelters, refineries, and cement plants release SO₂ during operations.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Diesel Engines</div>
+              <div class="source-card-desc">Ships, trucks, trains, and heavy machinery burning sulfur-rich fuel.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Petroleum Refining</div>
+              <div class="source-card-desc">Oil and gas processing releases sulfur compounds during refining.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Metal Processing</div>
+              <div class="source-card-desc">Copper, zinc, and iron smelting produce SO₂ as a byproduct.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Natural Sources</div>
+              <div class="source-card-desc">Volcanic eruptions and hot springs release SO₂ naturally.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+
+        <!-- Health + Environmental (diagonal) -->
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+            <div class="left-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Respiratory System</div>
+                <ul class="effect-list">
+                  <li>Airway constriction</li>
+                  <li>Difficulty breathing</li>
+                  <li>Throat irritation</li>
+                  <li>Worsening of asthma</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">At-Risk Groups</div>
+                <ul class="effect-list">
+                  <li>People with asthma</li>
+                  <li>Children</li>
+                  <li>Elderly individuals</li>
+                  <li>Those with heart disease</li>
+                </ul>
+              </div>
+            </div>
+            <div class="right-col">
+              <h2 class="section-heading"><span class="emoji">🌍</span> Environmental Impact</h2>
+              <ul class="styled-list">
+                <li><strong>Acid Rain</strong> — Major cause of acid rain damaging forests and lakes</li>
+                <li><strong>Vegetation Damage</strong> — Harms crops, trees, and plants</li>
+                <li><strong>Water Acidification</strong> — Damages aquatic ecosystems</li>
+                <li><strong>Building Corrosion</strong> — Deteriorates stone and metal structures</li>
+                <li><strong>Visibility</strong> — Forms fine particles reducing visibility</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protection -->
+        <div class="extra-block">
+          <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+          <ul class="styled-list">
+            <li><strong>Stay Indoors</strong> — When SO₂ levels are high</li>
+            <li><strong>Use Clean Energy</strong> — Support transition from coal to renewables</li>
+            <li><strong>Avoid Industrial Areas</strong> — Stay away from factories and refineries</li>
+            <li><strong>Monitor AQI</strong> — Check sulfur dioxide levels before outdoor activities</li>
+            <li><strong>Respiratory Protection</strong> — Use appropriate masks in high-risk areas</li>
+          </ul>
+        </div>
+
+        <!-- WHO Guidelines -->
+        <div class="who-block">
+          <h2 class="who-heading">📊 WHO Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">24-hour mean</div>
+              <div class="who-stat-value">40</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">10-minute mean</div>
+              <div class="who-stat-value">500</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">High concentrations can cause breathing difficulties within minutes.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Portal</title>
+  <link rel="stylesheet" href="static/css/dashboard.css">
+  <style>
+    .payment-container {
+      margin-top: 100px;
+      text-align: center;
+      background: white;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #1f2937; /* Dark text for visibility on white bg */
+    }
+    .payment-container h2 {
+      color: #111827;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .qr-placeholder {
+      width: 250px;
+      height: 250px;
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      margin: 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+{% set navbar_theme = 'light' %}
+{% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+      <div class="payment-container" style="max-width: 600px;">
+        <h2>Support Vayu</h2>
+        <p style="margin-bottom: 20px;">Enter an amount and pay securely using Cashfree.</p>
+        
+        <div class="payment-form" style="margin: 20px 0; display: flex; justify-content: center; gap: 10px;">
+            <input type="number" id="paymentAmount" placeholder="Amount (₹)" style="padding: 12px; width: 60%; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+            <button id="payButton" style="padding: 12px 24px; border-radius: 8px; background: linear-gradient(90deg, #6a11cb, #2575fc); color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;">Pay Now</button>
+        </div>
+
+        <p style="margin-top: 40px; font-size: 0.9em; color: #666;">Or scan directly using your UPI App:</p>
+        <div class="qr-container" style="margin: 15px auto; max-width: 250px;">
+          <img src="static/images/payment_qr.png" alt="Payment QR Code" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <script>
+    const cashfree = Cashfree({
+        mode: "sandbox" // Test mode since we are using Sandbox API keys
+    });
+
+    document.getElementById("payButton").addEventListener("click", async () => {
+        const amount = document.getElementById("paymentAmount").value;
+        if (!amount || amount <= 0) {
+            alert("Please enter a valid donation amount.");
+            return;
+        }
+
+        const btn = document.getElementById("payButton");
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+
+        try {
+            // 1. Fetch Payment Session ID from backend
+            const response = await fetch("/create-payment-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: amount })
+            });
+
+            const data = await response.json();
+
+            if (data.payment_session_id) {
+                // 2. Launch Cashfree Drop-in Checkout
+                let checkoutOptions = {
+                    paymentSessionId: data.payment_session_id,
+                    redirectTarget: "_self" // Redirect back to payment-return URL in backend
+                };
+                cashfree.checkout(checkoutOptions);
+            } else {
+                alert("Error: " + (data.error || "Could not generate payment session."));
+                btn.innerText = "Pay Now";
+                btn.disabled = false;
+            }
+
+        } catch (err) {
+            console.error("Payment Request Error:", err);
+            alert("Something went wrong with the network request.");
+            btn.innerText = "Pay Now";
+            btn.disabled = false;
+        }
+    });
+
+  </script>
+</body>
+</html>

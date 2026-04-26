@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQI Intelligence Center — Project Vayu</title>
+<meta name="description" content="Real-time AQI Intelligence with multi-model AI forecasts for Delhi regions">
+<link rel="stylesheet" href="/static/css/aqi_show.css">
+<link rel="stylesheet" href="/static/css/navbar.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="tp-{{ time_period | default('afternoon') }}" style="--bg-image: url('/static/images/weather/{{ bg_image | default('clear_day.png') }}');">
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+
+{% include 'components/navbar.html' %}
+
+{% if next_day and next_day.current_pollutants %}
+{% set cp = next_day.current_pollutants %}
+{% set best_key = next_day.best_model | default('xgb') %}
+
+<div class="aqi-page">
+
+  <div class="hero-card glass-card aqi-tint-{{ aqi_slug }}">
+
+    <div class="hero-illustration"></div>
+    <div class="hero-aqi-tint aqi-tint-overlay-{{ aqi_slug }}"></div>
+
+    <div class="hero-inner">
+      <div class="hero-top-row">
+        <div class="hero-location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <select class="region-select" id="regionFilter" onchange="changeRegion()">
+            <option value="North_Delhi" {% if selected_region=='North_Delhi'%}selected{% endif %}>North Delhi</option>
+            <option value="South_Delhi" {% if selected_region=='South_Delhi'%}selected{% endif %}>South Delhi</option>
+            <option value="East_Delhi"  {% if selected_region=='East_Delhi'%}selected{% endif %}>East Delhi</option>
+            <option value="West_Delhi"  {% if selected_region=='West_Delhi'%}selected{% endif %}>West Delhi</option>
+            <option value="Central_Delhi" {% if selected_region=='Central_Delhi'%}selected{% endif %}>Central Delhi</option>
+          </select>
+        </div>
+        <div class="hero-updated">Updated: {{ next_day.last_updated }}</div>
+      </div>
+      <div class="hero-label">Current Air Quality Index</div>
+
+      <div class="hero-body">
+        <div class="hero-left">
+          <div class="hero-aqi-row">
+            <div class="hero-aqi-num" id="heroAqiNum" data-target="{{ cp.aqi }}" style="color:{{ cp.color }};">0</div>
+            <div class="hero-aqi-meta">
+              <div class="hero-category" style="color:{{ cp.color }};">{{ cp.category }}</div>
+              <div class="hero-aqi-unit">AQI (India)</div>
+            </div>
+          </div>
+          <div class="hero-description">
+            {% if cp.aqi <= 50 %}Excellent air quality. Great day for outdoor activities.
+            {% elif cp.aqi <= 100 %}Acceptable air quality. Enjoy your outdoor activities.
+            {% elif cp.aqi <= 200 %}Unhealthy for sensitive groups. Reduce outdoor exertion.
+            {% elif cp.aqi <= 300 %}Everyone may experience health effects. Limit outdoors.
+            {% else %}Emergency conditions. Health warnings in effect.{% endif %}
+          </div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-label">PM2.5 Level</div>
+              <div class="hero-stat-val">{{ cp.pm25 }} <small>µg/m³</small></div>
+              <div class="hero-stat-sub">Fine particles</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-label">24h Trend</div>
+              {% if cp.trend is not none %}
+                {% if cp.trend > 0 %}
+                  <div class="hero-stat-val trend-bad">↑ +{{ cp.trend }}</div>
+                  <div class="hero-stat-sub">Worse than yesterday</div>
+                {% elif cp.trend < 0 %}
+                  <div class="hero-stat-val trend-good">↓ {{ cp.trend }}</div>
+                  <div class="hero-stat-sub">Better than yesterday</div>
+                {% else %}
+                  <div class="hero-stat-val">— 0</div>
+                  <div class="hero-stat-sub">No change</div>
+                {% endif %}
+              {% else %}
+                <div class="hero-stat-val">—</div>
+                <div class="hero-stat-sub">No prior data</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-label">Best AI Model</div>
+              <div class="hero-stat-val">{{ best_key | upper }}</div>
+              <div class="hero-stat-sub">Forecast: {{ next_day.best.aqi if next_day.best else '—' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aqi-scale-wrap">
+        <div class="aqi-scale-bar">
+          {% set aqi = cp.aqi %}
+          {% if aqi <= 50 %}
+            {% set pos = (aqi / 50 * 16.6) %}
+          {% elif aqi <= 100 %}
+            {% set pos = 16.6 + ((aqi - 50) / 50 * 16.6) %}
+          {% elif aqi <= 200 %}
+            {% set pos = 33.3 + ((aqi - 100) / 100 * 16.6) %}
+          {% elif aqi <= 300 %}
+            {% set pos = 50.0 + ((aqi - 200) / 100 * 16.6) %}
+          {% elif aqi <= 400 %}
+            {% set pos = 66.6 + ((aqi - 300) / 100 * 16.6) %}
+          {% else %}
+            {% set pos = 83.3 + (([aqi - 400, 100]|min) / 100 * 16.6) %}
+          {% endif %}
+          <div class="aqi-scale-dot" style="left:{{ pos | round(1) }}%;"></div>
+        </div>
+        <div class="aqi-scale-labels">
+          <div class="scale-item"><span>Good</span><small>0–50</small></div>
+          <div class="scale-item"><span>Satisfactory</span><small>51–100</small></div>
+          <div class="scale-item"><span>Moderate</span><small>101–200</small></div>
+          <div class="scale-item"><span>Poor</span><small>201–300</small></div>
+          <div class="scale-item"><span>Very Poor</span><small>301–400</small></div>
+          <div class="scale-item"><span>Severe</span><small>401–500</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% set models_data = [
+    ('xgb', 'XGBoost',       next_day.xgb  if next_day.xgb  is defined else none, '#3B82F6'),
+    ('lgb', 'LightGBM',      next_day.lgb  if next_day.lgb  is defined else none, '#EF4444'),
+    ('cat', 'CatBoost',      next_day.cat  if next_day.cat  is defined else none, '#10B981'),
+    ('rf',  'Random Forest', next_day.rf   if next_day.rf   is defined else none, '#F59E0B'),
+  ] %}
+
+  <section class="comparison-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+          Forecasted AQI
+        </div>
+        <div class="section-subtitle">Next 2 Hours Forecast · <span>{{ selected_region.replace('_',' ') }}</span></div>
+      </div>
+      <button class="methodology-btn airchat-btn" onclick="toggleAirChat()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        AirChat
+      </button>
+    </div>
+
+    <div class="model-grid">
+      {% for key, name, mdata, color in models_data %}
+      <div class="model-card glass-card {% if key == best_key %}model-best{% endif %}">
+        <div class="model-card-header">
+          <div class="model-name-group">
+            <div class="model-dot" style="background:{{ color }};"></div>
+            <div class="model-name">{{ name }}</div>
+          </div>
+          {% if key == best_key %}
+          <div class="best-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Best
+          </div>
+          {% endif %}
+        </div>
+
+        {% if mdata and mdata.aqi is defined and mdata.aqi is number %}
+        <div class="card-pred-label">Predicted AQI</div>
+        <div class="card-aqi-row">
+          <div class="card-aqi-val" style="color:{{ mdata.color }};">{{ mdata.aqi }}</div>
+          {% set slug = mdata.category | lower | replace(' ','-') %}
+          <div class="card-badge badge-{{ slug }}">{{ mdata.category }}</div>
+        </div>
+        <div class="mini-bar-wrap">
+          <div class="mini-bar">
+            {% set maqi = mdata.aqi %}
+            {% if maqi <= 50 %}
+              {% set mpos = (maqi / 50 * 16.6) %}
+            {% elif maqi <= 100 %}
+              {% set mpos = 16.6 + ((maqi - 50) / 50 * 16.6) %}
+            {% elif maqi <= 200 %}
+              {% set mpos = 33.3 + ((maqi - 100) / 100 * 16.6) %}
+            {% elif maqi <= 300 %}
+              {% set mpos = 50.0 + ((maqi - 200) / 100 * 16.6) %}
+            {% elif maqi <= 400 %}
+              {% set mpos = 66.6 + ((maqi - 300) / 100 * 16.6) %}
+            {% else %}
+              {% set mpos = 83.3 + (([maqi - 400, 100]|min) / 100 * 16.6) %}
+            {% endif %}
+            <div class="mini-dot" style="left:{{ mpos | round(1) }}%; background:{{ mdata.color }};"></div>
+          </div>
+          <div class="mini-bar-labels"><span>0</span><span>500</span></div>
+        </div>
+        <div class="card-details">
+          <div class="card-detail">
+            <div class="cd-label">PM2.5</div>
+            <div class="cd-val">{{ mdata.pm25 }} µg/m³</div>
+          </div>
+          <div class="card-detail">
+            <div class="cd-label">Confidence Range</div>
+            <div class="cd-val">{{ mdata.low }} – {{ mdata.high }}</div>
+          </div>
+        </div>
+        {% else %}
+        <div class="model-unavailable">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Model unavailable</span>
+          <small>Install tensorflow to enable GRU</small>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if extended_forecast and extended_forecast.keys()|length > 0 %}
+  <section class="extended-forecast-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><circle cx="12" cy="12" r="5"/></svg>
+          12-Hour AQI Outlook
+        </div>
+        <div class="section-subtitle">
+          Satellite-powered forecast using 
+          <select id="extendedModelSelect" onchange="switchExtendedModel(this.value)" class="model-select">
+            {% for m_key in extended_forecast.keys() %}
+              <option value="{{ m_key }}" {% if m_key == next_day.best_model %}selected{% endif %}>{{ m_key | upper }}</option>
+            {% endfor %}
+          </select>
+          model
+        </div>
+      </div>
+    </div>
+
+    <div class="extended-chart glass-card">
+      {% for m_key, fc_list in extended_forecast.items() %}
+      <div class="ext-bars ext-model-bars" id="ext-bars-{{ m_key }}" style="display: {% if m_key == next_day.best_model %}flex{% else %}none{% endif %};">
+        {% set max_aqi = 1 %}
+        {% for fc in fc_list %}
+          {% if fc.aqi > max_aqi %}{% set max_aqi = fc.aqi %}{% endif %}
+        {% endfor %}
+        {% for fc in fc_list %}
+        <div class="ext-bar-col">
+          <div class="ext-aqi-val" style="color: {{ fc.color }};">{{ fc.aqi }}</div>
+          <div class="ext-bar-track">
+            <div class="ext-bar-fill" style="height: {{ [fc.aqi / 500 * 100, 100] | min }}%; background: {{ fc.color }};" data-aqi="{{ fc.aqi }}"></div>
+          </div>
+          <div class="ext-bar-time">{{ fc.time_label }}</div>
+          <div class="ext-bar-cat">{{ fc.category }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+      <div class="ext-footer">
+        <div class="ext-info-wrap">
+          <button class="ext-info-btn" aria-label="How this works">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </button>
+          <div class="ext-tooltip">
+            <div class="ext-tooltip-title">How does this forecast work?</div>
+            <div class="ext-tooltip-body">
+              <p>We use <strong>satellite imagery</strong> to measure current pollution levels, then combine it with <strong>live weather forecasts</strong> (wind, rain, temperature) to predict how air quality will change.</p>
+              <p><strong>What drives these trends:</strong></p>
+              <ul>
+                <li>🌬️ <strong>Wind</strong> — Strong winds disperse pollutants, improving AQI</li>
+                <li>🌧️ <strong>Rain</strong> — Washes particles from the air</li>
+                <li>🌡️ <strong>Temperature</strong> — Heat creates mixing, cold traps pollution near ground</li>
+                <li>🕐 <strong>Time of day</strong> — Evening calm often worsens air quality</li>
+              </ul>
+              <p class="ext-tooltip-warn">⚠️ These are AI estimates and may differ from actual readings, especially for hours further ahead. Use as a general guide, not medical advice.</p>
+            </div>
+          </div>
+        </div>
+        <span class="ext-label">Based on satellite imagery & forecasted weather</span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function switchExtendedModel(modelKey) {
+      document.querySelectorAll('.ext-model-bars').forEach(el => {
+        el.style.display = 'none';
+      });
+      const selectedBars = document.getElementById('ext-bars-' + modelKey);
+      if (selectedBars) {
+        selectedBars.style.display = 'flex';
+      }
+    }
+  </script>
+  {% endif %}
+
+  {% if cp.aqi <= 50 %}{% set h_class='good'%}{% set h_title='Excellent Air Quality'%}{% set h_desc='Air quality is ideal. No risk for any group.'%}{% set r1='Outdoor Activities'%}{% set r1t='Perfect for exercise & outdoor plans'%}{% set r2='All Groups Safe'%}{% set r2t='No precautions needed'%}{% set r3='Open Windows'%}{% set r3t='Let fresh air circulate'%}
+  {% elif cp.aqi <= 100 %}{% set h_class='satisfactory'%}{% set h_title='Acceptable Quality'%}{% set h_desc='Air quality is satisfactory with little risk.'%}{% set r1='Outdoor Activities'%}{% set r1t='Go ahead with your plans'%}{% set r2='Sensitive Groups'%}{% set r2t='Minimal impact. Stay aware.'%}{% set r3='Indoor Air'%}{% set r3t='Open windows for fresh air'%}
+  {% elif cp.aqi <= 200 %}{% set h_class='moderate'%}{% set h_title='Moderate Pollution'%}{% set h_desc='Unhealthy for sensitive groups. Reduce outdoor exertion.'%}{% set r1='Limit Outdoors'%}{% set r1t='Reduce strenuous activity'%}{% set r2='Wear Mask'%}{% set r2t='N95 recommended outdoors'%}{% set r3='Air Purifier'%}{% set r3t='Run purifier indoors'%}
+  {% elif cp.aqi <= 300 %}{% set h_class='poor'%}{% set h_title='Poor Air Quality'%}{% set h_desc='Everyone may experience health effects.'%}{% set r1='Stay Indoors'%}{% set r1t='Avoid outdoor activity'%}{% set r2='N95 Mask Required'%}{% set r2t='Mandatory if going outside'%}{% set r3='Seal Windows'%}{% set r3t='Keep doors and windows shut'%}
+  {% else %}{% set h_class='severe'%}{% set h_title='Hazardous Level'%}{% set h_desc='Emergency conditions. Entire population at risk.'%}{% set r1='Do Not Go Outside'%}{% set r1t='Avoid all outdoor exposure'%}{% set r2='Respiratory Protection'%}{% set r2t='Use respirator masks'%}{% set r3='Seek Help'%}{% set r3t='Monitor symptoms closely'%}{% endif %}
+
+  <section class="health-section">
+    <div class="health-grid">
+      <div class="health-panel glass-card health-{{ h_class }}">
+        <div class="health-panel-title">Health Impact Assessment</div>
+        <div class="health-main">
+          <div class="health-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.5 4.5-6.5"/></svg>
+          </div>
+          <div>
+            <div class="health-headline">{{ h_title }} — AQI {{ cp.aqi }}</div>
+            <div class="health-desc">{{ h_desc }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="health-panel glass-card">
+        <div class="health-panel-title">Recommendations</div>
+        <div class="reco-grid">
+          <div class="reco-item">
+            <div class="reco-icon rc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="m6.5 20 3-6.5 2.5 3 2.5-3 3 6.5"/><path d="M12 11v3"/></svg></div>
+            <div><div class="reco-title">{{ r1 }}</div><div class="reco-text">{{ r1t }}</div></div>
+          </div>
+          <div class="reco-item">
+            <div class="reco-icon rc-coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div><div class="reco-title">{{ r2 }}</div><div class="reco-text">{{ r2t }}</div></div>
+          </div>
+          <div class="reco-item">
+            <div class="reco-icon rc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div><div class="reco-title">{{ r3 }}</div><div class="reco-text">{{ r3t }}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trends-section glass-card">
+    <div class="section-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      Historical AQI Trends
+    </div>
+    <div class="trends-controls">
+      <div class="ctrl-group">
+        <label>Time Range</label>
+        <select id="rangeType" onchange="toggleCustomDates()">
+          <option value="24h">Last 24 Hours</option>
+          <option value="7d" selected>Last 7 Days</option>
+          <option value="15d">Last 15 Days</option>
+          <option value="30d">Last 30 Days</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Comparison Model</label>
+        <select id="trendModel" onchange="reRenderChart()">
+          <option value="all">Show All Models</option>
+          <option value="xgb">XGBoost</option>
+          <option value="lgb">LightGBM</option>
+          <option value="cat">CatBoost</option>
+          <option value="rf">Random Forest</option>
+          <option value="none">Actual AQI Only</option>
+        </select>
+      </div>
+      <div id="customDateUI" style="display:none;gap:12px;">
+        <div class="ctrl-group"><label>From</label><input type="date" id="startDate"></div>
+        <div class="ctrl-group"><label>To</label><input type="date" id="endDate"></div>
+      </div>
+      <button class="btn-load" onclick="fetchRangeData()">Load Analytics</button>
+    </div>
+    <div class="chart-card" id="chartCard" style="display:none;"><canvas id="aqiChart" style="min-height:460px;"></canvas></div>
+    <div class="stats-grid" id="statsStrip" style="display:none;">
+      <div class="stat-item"><div class="stat-label">Average AQI</div><div class="stat-value" id="statAvg">—</div></div>
+      <div class="stat-item"><div class="stat-label">Peak Reading</div><div class="stat-value" id="statPeak">—</div></div>
+      <div class="stat-item"><div class="stat-label">Lowest Reading</div><div class="stat-value" id="statBest">—</div></div>
+      <div class="stat-item"><div class="stat-label">Trend</div><div class="stat-value" id="statTrend">—</div></div>
+    </div>
+  </section>
+
+</div>
+
+{% else %}
+<div class="aqi-page">
+  <div class="hero-card glass-card" style="text-align:center;padding:80px 40px;">
+    <h2 style="color:#fff;margin-bottom:12px;">Loading AQI Data…</h2>
+    <p style="color:rgba(255,255,255,0.5);">Prediction data is not available. Please check back shortly.</p>
+  </div>
+</div>
+{% endif %}
+
+<script>
+function changeRegion() {
+  window.location.href = `/aqi?region=${document.getElementById('regionFilter').value}`;
+}
+function toggleCustomDates() {
+  const ui = document.getElementById('customDateUI');
+  ui.style.display = document.getElementById('rangeType').value === 'custom' ? 'flex' : 'none';
+}
+
+let aqiChartInstance = null;
+let lastFetchedData = null;
+
+async function fetchRangeData() {
+  const rangeType = document.getElementById('rangeType').value;
+  const region = document.getElementById('regionFilter').value;
+  const btn = document.querySelector('.btn-load');
+  btn.textContent = 'Loading…'; btn.disabled = true;
+  let body = { range_type: rangeType, region };
+  if (rangeType === 'custom') {
+    body.start_date = document.getElementById('startDate').value;
+    body.end_date   = document.getElementById('endDate').value;
+    if (!body.start_date || !body.end_date) { alert('Select dates'); btn.textContent = 'Load Analytics'; btn.disabled = false; return; }
+  }
+  try {
+    const resp = await fetch('/aqi-range', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+    lastFetchedData = data;
+    renderChart(data); updateStats(data);
+    document.getElementById('chartCard').style.display = 'block';
+    document.getElementById('statsStrip').style.display = 'grid';
+  } finally { btn.textContent = 'Load Analytics'; btn.disabled = false; }
+}
+function reRenderChart() { if (lastFetchedData) renderChart(lastFetchedData); }
+function getAQIColor(v) {
+  if (v<=50) return '#22c55e'; if (v<=100) return '#84cc16'; if (v<=200) return '#eab308';
+  if (v<=300) return '#f97316'; if (v<=400) return '#ef4444'; return '#991b1b';
+}
+function renderChart(data) {
+  const ctx = document.getElementById('aqiChart').getContext('2d');
+  if (aqiChartInstance) aqiChartInstance.destroy();
+  const sel = document.getElementById('trendModel').value;
+
+  const h = ctx.canvas.offsetHeight || 460;
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0,   'rgba(139, 92, 246, 0.45)');
+  grad.addColorStop(0.5, 'rgba(99, 102, 241, 0.18)');
+  grad.addColorStop(1,   'rgba(99, 102, 241, 0.0)');
+
+  const datasets = [{
+    label: 'Actual AQI',
+    data: data.actual,
+    borderColor: 'rgba(255,255,255,0.90)',
+    backgroundColor: grad,
+    borderWidth: 2.5,
+    pointRadius: 4,
+    pointBackgroundColor: data.actual.map(getAQIColor),
+    pointBorderColor: 'rgba(255,255,255,0.5)',
+    pointBorderWidth: 1.5,
+    pointHoverRadius: 6,
+    tension: 0.4,
+    fill: true
+  }];
+
+  const mc = {
+    xgb: { label:'XGBoost',       color:'rgba(96, 165, 250, 0.85)'  },
+    lgb: { label:'LightGBM',      color:'rgba(251, 113, 133, 0.85)' },
+    cat: { label:'CatBoost',      color:'rgba(52, 211, 153, 0.85)'  },
+    rf:  { label:'Random Forest', color:'rgba(251, 191, 36, 0.85)'  },
+  };
+
+  if (sel === 'all') {
+    Object.keys(mc).forEach(m => {
+      if (data[m]) datasets.push({
+        label: mc[m].label,
+        data: data[m],
+        borderColor: mc[m].color,
+        backgroundColor: 'transparent',
+        borderWidth: 1.5,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        tension: 0.4,
+        fill: false
+      });
+    });
+  } else if (sel !== 'none' && mc[sel] && data[sel]) {
+    const mGrad = ctx.createLinearGradient(0, 0, 0, h);
+    mGrad.addColorStop(0,   mc[sel].color.replace('0.85','0.25'));
+    mGrad.addColorStop(1,   mc[sel].color.replace('0.85','0.0'));
+    datasets.push({
+      label: mc[sel].label,
+      data: data[sel],
+      borderColor: mc[sel].color,
+      backgroundColor: mGrad,
+      borderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      fill: true
+    });
+  }
+
+  aqiChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels: data.dates, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: {
+          display: sel !== 'none',
+          position: 'top',
+          labels: {
+            color: 'rgba(255,255,255,0.65)',
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 7,
+            padding: 18,
+            font: { family: 'Inter', size: 11, weight: '600' }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10, 14, 35, 0.85)',
+          borderColor: 'rgba(255,255,255,0.10)',
+          borderWidth: 1,
+          titleColor: '#fff',
+          bodyColor: 'rgba(255,255,255,0.70)',
+          padding: 14,
+          cornerRadius: 12,
+          callbacks: {
+            labelColor(ctx) {
+              return { borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor };
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.04)', lineWidth: 1 },
+          border: { display: false },
+          ticks: {
+            color: 'rgba(255,255,255,0.35)',
+            font: { family: 'Inter', size: 11 },
+            padding: 10
+          },
+          title: {
+            display: true, text: 'Air Quality Index',
+            color: 'rgba(255,255,255,0.30)',
+            font: { family: 'Inter', size: 11 }
+          }
+        },
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: {
+            color: 'rgba(255,255,255,0.35)',
+            font: { family: 'Inter', size: 10 },
+            maxRotation: 40,
+            maxTicksLimit: 12
+          }
+        }
+      }
+    }
+  });
+  document.getElementById('aqiChart').parentElement.style.minHeight = '460px';
+}
+function updateStats(data) {
+  const a = data.actual.filter(v=>v!==null);
+  if (!a.length) return;
+  const avg = a.reduce((x,y)=>x+y,0)/a.length;
+  document.getElementById('statAvg').textContent = Math.round(avg);
+  document.getElementById('statPeak').textContent = Math.max(...a);
+  document.getElementById('statBest').textContent = Math.min(...a);
+  const trend = a[a.length-1]-a[0];
+  const el = document.getElementById('statTrend');
+  el.textContent = (trend>0?'↑ +':'↓ ')+Math.round(trend);
+  el.style.color = trend>0?'#f87171':'#4ade80';
+}
+function animateCountUp(el) {
+  const t = parseInt(el.dataset.target,10); if (isNaN(t)){el.textContent='—';return;}
+  const d=1200, s=performance.now();
+  function tick(n){const p=Math.min((n-s)/d,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(e*t);if(p<1)requestAnimationFrame(tick);}
+  requestAnimationFrame(tick);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const el=document.getElementById('heroAqiNum'); if(el) animateCountUp(el);
+});
+</script>
+
+<div id="airchatPopup" class="airchat-popup">
+  <div class="airchat-popup-header">
+    <div class="header-left">
+      <span class="emoji">🌬️</span>
+      <div class="titles">
+        <span class="title">AirChat Assistant</span>
+      </div>
+    </div>
+    <button onclick="toggleAirChat()" class="close-chat-btn">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+  <div class="iframe-container">
+    <iframe src="/airchat?embed=true" class="airchat-iframe"></iframe>
+  </div>
+</div>
+
+<style>
+  .methodology-btn.airchat-btn {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(139, 92, 246, 0.6));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .methodology-btn.airchat-btn:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.8));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .airchat-popup {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 380px;
+    height: 520px;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    overflow: hidden;
+    user-select: none;
+  }
+  
+  .airchat-popup.active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .airchat-popup-header {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.7), rgba(139, 92, 246, 0.7));
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: move;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .header-left .emoji {
+    font-size: 1.5rem;
+    background: rgba(255,255,255,0.2);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  
+  .header-left .titles {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header-left .title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+  }
+  
+  .header-left .subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .close-chat-btn {
+    background: rgba(0,0,0,0.2);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  
+  .close-chat-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: rotate(90deg);
+  }
+  
+  .iframe-container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+  
+  .airchat-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+  }
+</style>
+
+<script>
+  function toggleAirChat() {
+    const popup = document.getElementById('airchatPopup');
+    popup.classList.toggle('active');
+  }
+
+  const popup = document.getElementById('airchatPopup');
+  const header = popup.querySelector('.airchat-popup-header');
+
+  let isDragging = false;
+  let offsetLeft = 0;
+  let offsetTop = 0;
+
+  header.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    popup.style.transition = 'none';
+    
+    const rect = popup.getBoundingClientRect();
+    offsetLeft = e.clientX - rect.left;
+    offsetTop = e.clientY - rect.top;
+    
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  function onMouseMove(e) {
+    if (!isDragging) return;
+    
+    const x = e.clientX - offsetLeft;
+    const y = e.clientY - offsetTop;
+    
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    popup.style.bottom = 'auto';
+    popup.style.right = 'auto';
+  }
+
+  function onMouseUp() {
+    isDragging = false;
+    popup.style.transition = '';
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+</script>
+</body>
+</html>

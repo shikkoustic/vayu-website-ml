@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="static/css/authenticate.css">
+</head>
+<body>
+  <h2>Sign Up</h2>
+
+  <form action="/register" method="POST" id="registerForm">
+
+    <label>Name</label>
+    <input type="text" name="name" required placeholder="Enter Your Name" value="{{ request.form.get('name', '') }}">
+
+    <label>Email</label>
+    <input type="email" name="email" id="email" required placeholder="Enter Your Email" value="{{ request.form.get('email', '') }}">
+    <span id="emailError" class="error-message"></span>
+
+    <div class="password-container">
+      <label>Password</label>
+      <button type="button" class="info-btn">
+        i
+        <span class="tooltip">
+          * Password must be at least 6 Characters Long <br>
+          * Password must have one Number (0-9)
+        </span>
+      </button>
+      <input type="password" name="password" id="password" required placeholder="Enter Your Password">
+      <span id="passwordError" class="error-message"></span>
+    </div>
+
+    <button type="submit">Register</button>
+  </form>
+  
+    {% if error %}
+      <p class="server-message error">{{ error }}</p>
+    {% endif %}
+    
+    {% if success %}
+      <p class="server-message success">{{ success }}</p>
+    {% endif %}
+
+  <p>
+    Already have an Account?
+    <a href="/login">Login Here</a>
+  </p>
+
+  <script src="static/script/register.js"></script>
+</body>
+</html>

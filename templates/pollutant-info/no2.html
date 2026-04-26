@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NO₂ - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-no2">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header no2">
+          <h1 class="pollutant-title">NO₂</h1>
+          <p class="pollutant-subtitle">Nitrogen Dioxide</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is NO₂?</h2>
+          <p>Nitrogen Dioxide (NO₂) is a reddish-brown gas with a sharp, harsh odor. It is one of several nitrogen
+            oxides and plays a major role in the formation of smog and acid rain.</p>
+          <p>NO₂ is highly reactive and can cause <strong>significant inflammation of the airways</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Sources — full-bleed image -->
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> Sources of NO₂</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Vehicle Exhaust</div>
+              <div class="source-card-desc">Cars, trucks, and buses are a major contributor of nitrogen dioxide
+                emissions.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Power Plants</div>
+              <div class="source-card-desc">Coal and gas-fired power stations release NO₂ during electricity generation.
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Industrial Processes</div>
+              <div class="source-card-desc">Chemical manufacturing and metal processing emit NO₂ as a byproduct.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Off-road Equipment</div>
+              <div class="source-card-desc">Construction machinery, ships, and aircraft contribute significantly.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Combustion</div>
+              <div class="source-card-desc">Burning fossil fuels for heating releases nitrogen oxides into the
+                atmosphere.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Natural Sources</div>
+              <div class="source-card-desc">Lightning and bacterial activity in soil produce natural NO₂ emissions.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+
+        <!-- Health + Environmental Impact (diagonal) -->
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+            <div class="left-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Immediate Effects</div>
+                <ul class="effect-list">
+                  <li>Airway inflammation</li>
+                  <li>Coughing and wheezing</li>
+                  <li>Difficulty breathing</li>
+                  <li>Increased asthma attacks</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">Long-term Effects</div>
+                <ul class="effect-list">
+                  <li>Development of asthma</li>
+                  <li>Increased respiratory infections</li>
+                  <li>Reduced lung function growth in children</li>
+                  <li>Cardiovascular issues</li>
+                </ul>
+              </div>
+            </div>
+            <div class="right-col">
+              <h2 class="section-heading"><span class="emoji">🌍</span> Environmental Impact</h2>
+              <ul class="styled-list">
+                <li><strong>Acid Rain</strong> — NO₂ contributes to acid rain formation</li>
+                <li><strong>Smog Formation</strong> — Reacts with VOCs to form ground-level ozone</li>
+                <li><strong>Water Pollution</strong> — Acid rain damages aquatic ecosystems</li>
+                <li><strong>Visibility</strong> — Contributes to haze and reduced visibility</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protection -->
+        <div class="extra-block">
+          <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+          <ul class="styled-list">
+            <li><strong>Reduce Car Use</strong> — Use public transport, carpool, or cycle</li>
+            <li><strong>Stay Indoors</strong> — On high NO₂ days, limit outdoor activities</li>
+            <li><strong>Avoid Traffic</strong> — Stay away from busy roads during peak hours</li>
+            <li><strong>Ventilation</strong> — Ensure good air circulation in cooking areas</li>
+            <li><strong>Air Purifiers</strong> — Use activated carbon filters</li>
+          </ul>
+        </div>
+
+        <!-- WHO Guidelines -->
+        <div class="who-block">
+          <h2 class="who-heading">📊 WHO Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">24-hour mean</div>
+              <div class="who-stat-value">25</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">Annual mean</div>
+              <div class="who-stat-value">10</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">High levels can cause severe respiratory inflammation.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PM10 - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-pm10">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header pm10">
+          <h1 class="pollutant-title">PM10</h1>
+          <p class="pollutant-subtitle">Particulate Matter &lt; 10 µm</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is PM10?</h2>
+          <p>PM10 refers to coarse particulate matter with a diameter of 10 micrometers or smaller. While larger than
+            PM2.5, these particles can still be inhaled and cause health problems.</p>
+          <p>PM10 particles are about <strong>7 times thinner than a human hair</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Sources — full-bleed image -->
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> Sources of PM10</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Road Dust</div>
+              <div class="source-card-desc">Traffic, tire wear, and brake wear lift coarse particles from road surfaces.
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Construction</div>
+              <div class="source-card-desc">Demolition and crushing operations release large quantities of coarse dust.
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Agriculture</div>
+              <div class="source-card-desc">Plowing, harvesting, and livestock activity stir soil particles into the
+                air.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Mining</div>
+              <div class="source-card-desc">Quarrying and mineral processing generate significant coarse particulate
+                loads.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Unpaved Roads</div>
+              <div class="source-card-desc">Vehicles on dirt roads continuously disturb loose surface dust.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Natural Sources</div>
+              <div class="source-card-desc">Sea salt spray, pollen, and soil erosion contribute naturally to PM10
+                levels.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <!-- Health + Protection -->
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+            <div class="left-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Respiratory Issues</div>
+                <ul class="effect-list">
+                  <li>Irritation of airways</li>
+                  <li>Worsening of asthma symptoms</li>
+                  <li>Reduced lung function</li>
+                  <li>Increased respiratory infections</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">Vulnerable Groups</div>
+                <ul class="effect-list">
+                  <li>Children</li>
+                  <li>Elderly people</li>
+                  <li>People with asthma or COPD</li>
+                  <li>Outdoor workers</li>
+                </ul>
+              </div>
+            </div>
+            <div class="right-col">
+              <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+              <ul class="styled-list">
+                <li><strong>Face Masks</strong> — N95 masks filter out PM10 particles</li>
+                <li><strong>Limit Outdoor Exercise</strong> — Exercise indoors on high pollution days</li>
+                <li><strong>Close Windows</strong> — Keep dust out during windy conditions</li>
+                <li><strong>Wet Cleaning</strong> — Use damp cloth to clean surfaces</li>
+                <li><strong>Avoid Dusty Areas</strong> — Stay away from construction sites</li>
+                <li><strong>Vehicle Maintenance</strong> — Keep car windows closed in traffic</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- WHO Guidelines -->
+        <div class="who-block">
+          <h2 class="who-heading">📊 WHO Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">24-hour mean</div>
+              <div class="who-stat-value">45</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">Annual mean</div>
+              <div class="who-stat-value">15</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">Levels above these thresholds can cause respiratory problems.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>

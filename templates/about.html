@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Project Vayu</title>
+  <link rel="stylesheet" href="/static/css/navbar.css">
+  <link rel="stylesheet" href="/static/css/aqi_show.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="tp-{{ time_period | default('afternoon') }}" style="--bg-image: url('/static/images/weather/{{ bg_image | default('clear_day.png') }}');">
+
+  <div class="bg-layer"></div>
+  <div class="bg-overlay"></div>
+
+  {% include 'components/navbar.html' %}
+
+  <div class="aqi-page" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh;">
+    
+    <div class="hero-card glass-card" style="max-width:800px; width:100%; padding:50px; text-align:center;">
+      <h1 style="font-size:3rem; font-weight:800; margin-bottom:20px; color:#fff; letter-spacing:-1px;">About Project Vayu</h1>
+      <div style="width:60px; height:4px; background:linear-gradient(90deg, #60a5fa, #a78bfa); margin:0 auto 30px; border-radius:2px;"></div>
+      
+      <p style="font-size:1.15rem; color:rgba(255,255,255,0.85); line-height:1.7; margin-bottom:24px;">
+        <strong>Vayu</strong> is a student-led initiative dedicated to forecasting air quality and providing actionable insights in the simplest, most accurate way possible.
+      </p>
+      
+      <p style="font-size:1.05rem; color:rgba(255,255,255,0.7); line-height:1.7; margin-bottom:24px;">
+        By fusing satellite-based data with advanced machine learning models (like XGBoost, LightGBM, and CatBoost), we process live meteorological patterns to accurately predict the Air Quality Index for specific local regions.
+      </p>
+      
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin-top:40px; text-align:left;">
+        <div class="glass-card" style="padding:20px; background:rgba(255,255,255,0.03);">
+          <div style="font-weight:700; color:#fff; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Current Focus
+          </div>
+          <p style="font-size:0.85rem; color:rgba(255,255,255,0.6);">Currently based in Delhi, analyzing multiple regional zones including North, South, East, West, and Central Delhi.</p>
+        </div>
+        <div class="glass-card" style="padding:20px; background:rgba(255,255,255,0.03);">
+          <div style="font-weight:700; color:#fff; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+            Future Vision
+          </div>
+          <p style="font-size:0.85rem; color:rgba(255,255,255,0.6);">We are continuously refining our models and look forward to advancing this venture to other major cities across the country.</p>
+        </div>
+      </div>
+    </div>
+    
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:30px; font-style:italic;">
+      *Our insights are subject to natural variation, and forecasted data may have slight error margins.
+    </p>
+
+  </div>
+
+</body>
+</html>

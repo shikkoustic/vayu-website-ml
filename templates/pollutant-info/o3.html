@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O₃ - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-o3">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header o3">
+          <h1 class="pollutant-title">O₃</h1>
+          <p class="pollutant-subtitle">Ground-Level Ozone</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is Ground-Level O₃?</h2>
+          <p>Ground-level ozone (O₃) is not emitted directly into the air but is created by chemical reactions between
+            nitrogen oxides (NOx) and volatile organic compounds (VOCs) in the presence of sunlight.</p>
+          <p><strong>Important:</strong> Ground-level ozone (harmful) is different from stratospheric ozone (the
+            protective layer in the upper atmosphere).</p>
+        </div>
+      </div>
+
+      <!-- Sources — full-bleed image -->
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> How is O₃ Formed?</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Vehicle Emissions</div>
+              <div class="source-card-desc">NOx from cars reacts with sunlight to form ground-level ozone.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Industrial Emissions</div>
+              <div class="source-card-desc">Factories releasing NOx and VOCs contribute to ozone precursors.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Gasoline Vapors</div>
+              <div class="source-card-desc">Evaporating fuel from vehicles and gas stations add VOCs to the air.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Chemical Solvents</div>
+              <div class="source-card-desc">Paints, cleaners, and industrial chemicals release ozone-forming VOCs.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Power Plants</div>
+              <div class="source-card-desc">Emissions from electricity generation provide NOx precursors for ozone.
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Hot, Sunny Weather</div>
+              <div class="source-card-desc">Ozone forms more readily under intense heat and sunlight conditions.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+
+        <!-- Health + Environmental (diagonal) -->
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+            <div class="left-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Respiratory Effects</div>
+                <ul class="effect-list">
+                  <li>Chest pain and coughing</li>
+                  <li>Throat irritation</li>
+                  <li>Shortness of breath</li>
+                  <li>Worsening of asthma and COPD</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">Long-term Effects</div>
+                <ul class="effect-list">
+                  <li>Permanent lung damage</li>
+                  <li>Reduced lung function</li>
+                  <li>Increased respiratory infections</li>
+                  <li>Premature aging of lungs</li>
+                </ul>
+              </div>
+            </div>
+            <div class="right-col">
+              <h2 class="section-heading"><span class="emoji">🌍</span> Environmental Impact</h2>
+              <ul class="styled-list">
+                <li><strong>Crop Damage</strong> — Reduces agricultural yields significantly</li>
+                <li><strong>Forest Damage</strong> — Slows tree growth and harms vegetation</li>
+                <li><strong>Climate Impact</strong> — Acts as a potent greenhouse gas</li>
+                <li><strong>Ecosystem Disruption</strong> — Affects plant biodiversity broadly</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protection -->
+        <div class="extra-block">
+          <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+          <ul class="styled-list">
+            <li><strong>Time Your Activities</strong> — Exercise in the morning when ozone is lowest</li>
+            <li><strong>Avoid Peak Hours</strong> — Ozone is highest in afternoon and early evening</li>
+            <li><strong>Stay Indoors</strong> — On high ozone days, limit outdoor activities</li>
+            <li><strong>Reduce Driving</strong> — Carpool or use public transport</li>
+            <li><strong>Refuel Smart</strong> — Fill gas tank in evening when it's cooler</li>
+            <li><strong>Monitor AQI</strong> — Check ozone forecasts before outdoor plans</li>
+          </ul>
+        </div>
+
+        <!-- Ozone Season -->
+        <div class="season-block">
+          <h2 class="section-heading"><span class="emoji">☀️</span> Ozone Season</h2>
+          <p>Ozone pollution is typically worse during hot, sunny summer months. It can be especially high from April to
+            September in many regions.</p>
+          <p><strong>Peak Hours:</strong> 2 PM – 8 PM when sunlight is at its strongest.</p>
+        </div>
+
+        <!-- WHO Guidelines -->
+        <div class="who-block">
+          <h2 class="who-heading">📊 WHO Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">8-hour mean</div>
+              <div class="who-stat-value">100</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">Peak season</div>
+              <div class="who-stat-value">60</div>
+              <div class="who-stat-unit">μg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">High ozone levels can cause immediate breathing problems and long-term lung damage.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

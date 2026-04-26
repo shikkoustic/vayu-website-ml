@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CO - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="../static/css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/pollutants.css">
+</head>
+
+<body class="theme-co">
+    {% include 'components/navbar.html' %}
+
+  <div class="dashboard-container">
+    <div class="content-area">
+
+      <div class="info-section">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="pollutant-header co">
+          <h1 class="pollutant-title">CO</h1>
+          <p class="pollutant-subtitle">Carbon Monoxide</p>
+        </div>
+
+        <div class="what-block">
+          <h2 class="section-heading"><span class="emoji">🔍</span> What is CO?</h2>
+          <p>Carbon Monoxide (CO) is a colorless, odorless, and tasteless gas that is highly toxic to humans and
+            animals. It's often called the <strong>"silent killer"</strong> because you can't see, smell, or taste it.
+          </p>
+          <p>CO prevents oxygen from being transported in the blood, which can be <strong>fatal at high
+              concentrations</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Sources — full-bleed image -->
+      <div class="sources-section">
+        <div class="sources-img-bg"></div>
+        <div class="sources-content">
+          <h2 class="section-heading"><span class="emoji">📍</span> Sources of CO</h2>
+          <div class="source-grid">
+            <div class="source-card">
+              <div class="source-card-title">Vehicle Exhaust</div>
+              <div class="source-card-desc">Cars, motorcycles, and trucks are the main outdoor source of carbon
+                monoxide.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Incomplete Combustion</div>
+              <div class="source-card-desc">Gas stoves, furnaces, and water heaters that burn fuel incompletely.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Tobacco Smoke</div>
+              <div class="source-card-desc">Cigarettes and other smoking products produce concentrated CO.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Generators</div>
+              <div class="source-card-desc">Portable generators used in poorly ventilated areas are a serious risk.
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Industrial Processes</div>
+              <div class="source-card-desc">Steel production and chemical manufacturing release CO as a byproduct.</div>
+            </div>
+            <div class="source-card">
+              <div class="source-card-title">Wood Burning</div>
+              <div class="source-card-desc">Fireplaces, wood stoves, and charcoal grills produce significant CO.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+
+        <!-- Health + Warning Signs (diagonal) -->
+        <div class="dual-section-wrapper">
+          <div class="col-divider"></div>
+          <div class="dual-section">
+            <div class="left-col">
+              <h2 class="section-heading"><span class="emoji">⚠️</span> Health Effects</h2>
+              <div class="effect-group">
+                <div class="effect-group-title">Low-Level Exposure</div>
+                <ul class="effect-list">
+                  <li>Headaches</li>
+                  <li>Dizziness</li>
+                  <li>Fatigue and weakness</li>
+                  <li>Nausea and vomiting</li>
+                </ul>
+              </div>
+              <div class="effect-group">
+                <div class="effect-group-title">High-Level Exposure</div>
+                <ul class="effect-list">
+                  <li>Confusion and disorientation</li>
+                  <li>Loss of consciousness</li>
+                  <li>Brain damage</li>
+                  <li>Death</li>
+                </ul>
+              </div>
+            </div>
+            <div class="right-col">
+              <h2 class="section-heading"><span class="emoji">🚨</span> Warning Signs of Poisoning</h2>
+              <ul class="styled-list">
+                <li><strong>Flu-like Symptoms</strong> — Without fever</li>
+                <li><strong>Multiple People Ill</strong> — Several people feeling sick simultaneously</li>
+                <li><strong>Symptoms Improve</strong> — When away from the source location</li>
+                <li><strong>Pets Acting Strange</strong> — Animals are more sensitive to CO</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protection -->
+        <div class="extra-block">
+          <h2 class="section-heading"><span class="emoji">🛡️</span> Protection Measures</h2>
+          <ul class="styled-list">
+            <li><strong>Install CO Detectors</strong> — On every floor of your home</li>
+            <li><strong>Proper Ventilation</strong> — Ensure adequate airflow in enclosed spaces</li>
+            <li><strong>Regular Maintenance</strong> — Service heating systems and chimneys annually</li>
+            <li><strong>Never Use Indoors</strong> — Generators, grills, or camp stoves need outdoor use</li>
+            <li><strong>Car Safety</strong> — Never run car engine in a closed garage</li>
+            <li><strong>Check Appliances</strong> — Look for yellow or flickering flames (should be blue)</li>
+          </ul>
+        </div>
+
+        <!-- Safety Guidelines -->
+        <div class="who-block">
+          <h2 class="who-heading">📊 Safety Guidelines</h2>
+          <div class="who-stats">
+            <div class="who-stat">
+              <div class="who-stat-label">8-hour mean (WHO)</div>
+              <div class="who-stat-value">10</div>
+              <div class="who-stat-unit">mg/m³</div>
+            </div>
+            <div class="who-stat">
+              <div class="who-stat-label">1-hour mean</div>
+              <div class="who-stat-value">35</div>
+              <div class="who-stat-unit">mg/m³</div>
+            </div>
+          </div>
+          <p class="who-note">CO levels above 70 ppm can cause immediate health effects. Levels above 150 ppm can be
+            fatal.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
